@@ -2,7 +2,7 @@
 include('../db/connect.php');
 use Medoo\Medoo;
 
-$rs = new Resultado($data);
+$rs = new Resultado();
 
 $rs->verificar('token');
 
@@ -14,6 +14,16 @@ $database = new Medoo([
     'password' => DB_PASS
 ]);
 
-$data = $database->select('pokemon','*');
+$tmpx = $database->select('maestro',['id'],['token' => $_POST['token']]);
+
+if(count($tmpx) == 0){
+        $rs->exito = false;
+        $rs->ms = "Error de validacion :'v";
+        $rs->finalizar();
+}
+
+$maestro = $tmpx[0];
+
+$data = $database->select('pokemon','*', ['maestro' => $maestro['id']]);
 $rs->datos = $data;
 $rs->finalizar();
